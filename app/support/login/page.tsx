@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import AuthLayout from "@/components/support/AuthLayout"
-import { ApiError, login } from "@/lib/auth"
+import { ApiError, adminDashboardUrl, login } from "@/lib/auth"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -22,8 +22,12 @@ export default function LoginPage() {
     setError(null)
     setLoading(true)
     try {
-      await login(String(data.get("email")).trim(), String(data.get("password")))
-      router.push("/support")
+      const session = await login(String(data.get("email")).trim(), String(data.get("password")))
+      if (session.role === "admin") {
+        window.location.href = adminDashboardUrl(session.access_token, session.user_name)
+      } else {
+        router.push("/support")
+      }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "La connexion a échoué. Réessayez.")
       setLoading(false)

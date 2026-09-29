@@ -6,7 +6,8 @@ Site vitrine de **GENETICS** (www.groupegenetics.com), reconstruit à l'identiqu
 - Responsive : versions dédiées mobile / tablette / desktop
 - Bilingue **FR / EN**
 - Le formulaire de contact envoie les messages via l'API `groupegenetics-api` (`POST /contact/send-email`)
-- **Espace support** relié à l'API : connexion (`/support/login` → `POST /auth/login`), création de compte (`/support/register` → `POST /users/create-user`) et espace client (`/support` → `GET /users/me`)
+- **Espace support** relié à l'API : connexion (`/support/login`), création de compte (`/support/register`) et espace client (`/support`) pour déclarer et suivre ses incidents
+- Après connexion, un **administrateur** est redirigé vers le tableau de bord `groupegenetics-admin` (`NEXT_PUBLIC_ADMIN_URL`), un **client** vers son espace
 
 ## ⚡ Démarrage rapide
 
@@ -40,6 +41,7 @@ Build de production : `npm run build && npm start`.
 | Variable | Rôle | Défaut |
 |---|---|---|
 | `NEXT_PUBLIC_API_URL` | URL de `groupegenetics-api` (formulaire de contact, connexion et création de compte) | `http://localhost:8000` |
+| `NEXT_PUBLIC_ADMIN_URL` | Tableau de bord admin (redirection des administrateurs) | `http://localhost:3000` |
 | `NEXT_PUBLIC_SITE_URL` | URL publique du site (balises de partage) | `https://www.groupegenetics.com` |
 | `FRONT_PORT` | Port hôte utilisé par Docker Compose | `3001` |
 
@@ -52,7 +54,7 @@ app/
   support/
     login/page.tsx    # Connexion
     register/page.tsx # Création de compte
-    page.tsx          # Espace client (après connexion)
+    page.tsx          # Espace client : incidents, déclaration, suivi
   globals.css
 components/
   HomePage.tsx        # Toute la page (navigation, sections, popups, footer)
@@ -61,7 +63,8 @@ components/
   ui/                 # Composants shadcn/ui (button, card, dialog, input, label, textarea)
 lib/
   translations.ts     # ✏️ Textes FR / EN
-  auth.ts             # Appels à l'API (connexion, inscription, profil) + jeton
+  auth.ts             # Appels à l'API (connexion, inscription, profil, rôle) + jeton
+  incidents.ts        # Incidents du client (liste, création) + libellés
   config.ts           # URLs (support, API)
 public/
   logo.png

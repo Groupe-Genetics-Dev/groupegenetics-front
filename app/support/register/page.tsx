@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import AuthLayout from "@/components/support/AuthLayout"
-import { ApiError, login, register } from "@/lib/auth"
+import { ApiError, adminDashboardUrl, login, register } from "@/lib/auth"
 
 const MIN_PASSWORD = 8
 
@@ -44,8 +44,12 @@ export default function RegisterPage() {
         password,
       })
       // Compte créé : connexion automatique puis accès à l'espace support
-      await login(get("email"), password)
-      router.push("/support")
+      const session = await login(get("email"), password)
+      if (session.role === "admin") {
+        window.location.href = adminDashboardUrl(session.access_token, session.user_name)
+      } else {
+        router.push("/support")
+      }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "La création du compte a échoué. Réessayez.")
       setLoading(false)

@@ -12,8 +12,10 @@ WORKDIR /app
 # Les variables NEXT_PUBLIC_* sont intégrées au bundle au moment du build
 ARG NEXT_PUBLIC_SITE_URL=https://www.groupegenetics.com
 ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ARG NEXT_PUBLIC_ADMIN_URL=http://localhost:3000
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
     NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
+    NEXT_PUBLIC_ADMIN_URL=$NEXT_PUBLIC_ADMIN_URL \
     NEXT_TELEMETRY_DISABLED=1
 
 COPY --from=deps /app/node_modules ./node_modules

@@ -1,8 +1,10 @@
 // Connexion au backend groupegenetics-api pour l'espace support
 
-import { API_URL } from "./config"
+import { ADMIN_URL, API_URL } from "./config"
 
 const TOKEN_KEY = "genetics_token"
+
+export type Role = "admin" | "client"
 
 export type User = {
   id: string
@@ -11,6 +13,7 @@ export type User = {
   company?: string | null
   phone?: string | null
   createdAt: string
+  role: Role
 }
 
 export type RegisterData = {
@@ -24,7 +27,7 @@ export type RegisterData = {
 export class ApiError extends Error {}
 
 // Traduit les erreurs FastAPI ({ detail: "..." } ou liste de validation) en message lisible
-async function errorMessage(res: Response, fallback: string) {
+export async function errorMessage(res: Response, fallback: string) {
   try {
     const body = await res.json()
     if (typeof body.detail === "string") return body.detail
@@ -35,7 +38,7 @@ async function errorMessage(res: Response, fallback: string) {
   return fallback
 }
 
-async function request(path: string, init: RequestInit) {
+export async function request(path: string, init: RequestInit) {
   try {
     return await fetch(`${API_URL}${path}`, init)
   } catch {
@@ -52,7 +55,7 @@ export async function login(email: string, password: string) {
   })
   if (res.status === 403) throw new ApiError("E-mail ou mot de passe incorrect.")
   if (!res.ok) throw new ApiError(await errorMessage(res, "La connexion a échoué. Réessayez."))
-  const data: { access_token: string; user_name: string } = await res.json()
+  const data: { access_token: string; user_name: string; role: Role } = await res.json()
   saveToken(data.access_token)
   return data
 }
@@ -76,6 +79,11 @@ export async function getMe(token: string) {
   if (res.status === 401) throw new ApiError("Session expirée. Reconnectez-vous.")
   if (!res.ok) throw new ApiError(await errorMessage(res, "Impossible de charger votre compte."))
   return (await res.json()) as User
+}
+
+// Les administrateurs passent sur le tableau de bord (autre application) avec leur session
+export function adminDashboardUrl(token: string, name: string) {
+  return `${ADMIN_URL}/auth/callback#${new URLSearchParams({ token, name })}`
 }
 
 export function saveToken(token: string) {
