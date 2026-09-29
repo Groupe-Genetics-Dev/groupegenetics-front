@@ -1,37 +1,21 @@
-import type { Metadata, Viewport } from "next"
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { I18nProvider } from "@/lib/i18n"
-import { dictionaries } from "@/lib/content"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
-
-const { meta } = dictionaries.fr
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.groupegenetics.com"),
-  title: meta.title,
-  description: meta.description,
-  icons: { icon: "/logo.png" },
-  openGraph: {
-    title: meta.title,
-    description: meta.description,
-    images: ["/logo.png"],
-    locale: "fr_FR",
-    type: "website",
-  },
-}
-
-export const viewport: Viewport = {
-  themeColor: "#032454",
+  title: "GENETICS - Solutions IT & Transformation Digitale",
+  description:
+    "GENETICS - Votre partenaire pour les solutions IT, Cloud, Conseil et Transformation Digitale au Sénégal et en Gambie",
+  icons: { icon: "/logo.png", shortcut: "/logo.png", apple: "/logo.png" },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={inter.variable}>
-      <body className="font-sans">
-        <I18nProvider>{children}</I18nProvider>
-      </body>
+    <html lang="fr">
+      <body className={`${inter.className} ${inter.variable}`}>{children}</body>
     </html>
   )
 }

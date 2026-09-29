@@ -1,10 +1,11 @@
 # Groupe Genetics — Site vitrine
 
-Site vitrine de **GENETICS** (solutions IT, sécurité électronique et transformation digitale), développé avec **Next.js 15** (App Router), **React 19**, **TypeScript** et **Tailwind CSS**.
+Site vitrine de **GENETICS** (www.groupegenetics.com), reconstruit à l'identique avec **Next.js 15** (App Router), **React 19**, **TypeScript**, **Tailwind CSS** et **shadcn/ui**.
 
-- Une seule page responsive : Accueil, À propos, Nos solutions, Contact
-- Bilingue **FR / EN** (bouton dans le menu, choix mémorisé dans le navigateur)
-- Lien « Support » vers l'application `groupegenetics-admin`
+- Même interface que le site en ligne : Accueil, Qui sommes-nous, Services IT (cartes dépliables), popup Welqo, bandeau cookies, formulaire de contact, footer
+- Responsive : versions dédiées mobile / tablette / desktop
+- Bilingue **FR / EN**
+- Le formulaire de contact envoie les messages via l'API `groupegenetics-api` (`POST /contact/send-email`)
 
 ## ⚡ Démarrage rapide
 
@@ -37,30 +38,26 @@ Build de production : `npm run build && npm start`.
 
 | Variable | Rôle | Défaut |
 |---|---|---|
-| `NEXT_PUBLIC_SUPPORT_URL` | Lien « Support » du menu (connexion admin) | `http://localhost:3000/login` |
-| `NEXT_PUBLIC_SITE_URL` | URL publique du site (Open Graph) | `https://www.groupegenetics.com` |
+| `NEXT_PUBLIC_SUPPORT_URL` | Lien « Support » du menu (connexion admin) | `/support/login` |
+| `NEXT_PUBLIC_API_URL` | URL de `groupegenetics-api` pour le formulaire de contact | `http://localhost:8000` |
+| `NEXT_PUBLIC_SITE_URL` | URL publique du site (balises de partage) | `https://www.groupegenetics.com` |
 | `FRONT_PORT` | Port hôte utilisé par Docker Compose | `3001` |
 
 ## 🏗️ Structure
 
 ```
 app/
-  layout.tsx        # Police Inter, métadonnées SEO, provider de langue
-  page.tsx          # Assemble les sections
-  globals.css       # Tailwind + classes utilitaires (boutons, sections)
+  layout.tsx          # Police Inter, métadonnées SEO
+  page.tsx
+  globals.css
 components/
-  Header.tsx        # Menu fixe + menu mobile + sélecteur FR/EN
-  Hero.tsx          # Accueil
-  About.tsx         # Qui sommes-nous, vision, mission, valeurs
-  Solutions.tsx     # Les 3 pôles de services + bandeau CTA
-  Contact.tsx       # Bureaux Sénégal / Gambie + e-mail
-  Footer.tsx
+  HomePage.tsx        # Toute la page (navigation, sections, popups, footer)
+  CookieBanner.tsx
+  ui/                 # Composants shadcn/ui (button, card, dialog, input, label, textarea)
 lib/
-  content.ts        # ✏️ TOUS les textes (FR + EN) et coordonnées
-  i18n.tsx          # Gestion de la langue
-  config.ts         # URL du support
+  translations.ts     # ✏️ Textes FR / EN
+  config.ts           # URLs (support, API, Welqo)
 public/
   logo.png
+tailwind.config.ts    # Couleurs de la charte (primary, accent, genetics-dark-blue, genetics-gold)
 ```
-
-Pour modifier un texte, un numéro ou une adresse : éditer uniquement `lib/content.ts`.
