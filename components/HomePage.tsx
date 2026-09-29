@@ -8,7 +8,6 @@ import {
   Camera,
   Cloud,
   Code,
-  ExternalLink,
   Eye,
   FileText,
   Fingerprint,
@@ -21,13 +20,10 @@ import {
   Monitor,
   Network,
   Phone,
-  QrCode,
   Server,
   Shield,
   ShieldAlert,
-  ShieldCheck,
   Target,
-  UserCheck,
   Wifi,
   type LucideIcon,
 } from "lucide-react"
@@ -44,7 +40,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { translations, type Lang } from "@/lib/translations"
-import { API_URL, SUPPORT_URL, WELQO_URL } from "@/lib/config"
+import { API_URL, SUPPORT_URL } from "@/lib/config"
 import CookieBanner from "./CookieBanner"
 
 type Service = {
@@ -60,17 +56,9 @@ type SendStatus = "idle" | "sending" | "sent" | "error"
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [lang, setLang] = useState<Lang>("fr")
-  const [welqoOpen, setWelqoOpen] = useState(false)
   const [contactOpen, setContactOpen] = useState(false)
   const [sendStatus, setSendStatus] = useState<SendStatus>("idle")
   const t = translations[lang]
-
-  useEffect(() => {
-    if (!sessionStorage.getItem("hasVisitedWelqo")) {
-      const timer = setTimeout(() => setWelqoOpen(true), 2000)
-      return () => clearTimeout(timer)
-    }
-  }, [])
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -169,75 +157,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-genetics-dark-blue-50">
-      {/* ---------- Popup Welqo ---------- */}
-      <Dialog open={welqoOpen} onOpenChange={setWelqoOpen}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-[600px] mx-auto bg-gradient-to-br from-white via-genetics-dark-blue-50/30 to-genetics-gold-50/30 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
-          <DialogHeader className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <DialogTitle className="text-xl sm:text-3xl font-bold text-slate-900">{t.welqoModal.title}</DialogTitle>
-              <div className="flex items-center gap-1 border border-slate-300 rounded-lg p-1 flex-shrink-0 mr-6">
-                {langButton("fr", "xs")}
-                {langButton("en", "xs")}
-              </div>
-            </div>
-            <DialogDescription className="text-sm sm:text-lg text-slate-700 text-left">
-              {t.welqoModal.subtitle}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
-            <p className="text-slate-600 leading-relaxed text-sm sm:text-base">{t.welqoModal.description}</p>
-            <div className="grid grid-cols-3 gap-2 sm:gap-4">
-              {[
-                { icon: UserCheck, title: t.welqoModal.feature1, desc: t.welqoModal.feature1Desc, gold: false },
-                { icon: ShieldCheck, title: t.welqoModal.feature2, desc: t.welqoModal.feature2Desc, gold: true },
-                { icon: QrCode, title: t.welqoModal.feature3, desc: t.welqoModal.feature3Desc, gold: false },
-              ].map(({ icon: Icon, title, desc, gold }) => (
-                <div
-                  key={title}
-                  className={`text-center p-2 sm:p-4 bg-white/60 rounded-xl border ${
-                    gold ? "border-genetics-gold-100" : "border-genetics-dark-blue-100"
-                  }`}
-                >
-                  <div
-                    className={`w-8 h-8 sm:w-12 sm:h-12 ${
-                      gold ? "bg-accent" : "bg-primary"
-                    } rounded-lg flex items-center justify-center mx-auto mb-2 sm:mb-3`}
-                  >
-                    <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-slate-900 text-xs sm:text-sm mb-1 line-clamp-2">{title}</h4>
-                  <p className="text-slate-600 text-[10px] sm:text-xs hidden sm:block">{desc}</p>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
-              <a
-                href={WELQO_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1"
-                onClick={() => {
-                  sessionStorage.setItem("hasVisitedWelqo", "true")
-                  setWelqoOpen(false)
-                }}
-              >
-                <Button className="w-full bg-primary hover:bg-genetics-dark-blue-700 text-white text-sm sm:text-base py-2 sm:py-3">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  {t.welqoModal.visitWebsite}
-                </Button>
-              </a>
-              <Button
-                variant="outline"
-                className="flex-1 bg-transparent text-sm sm:text-base py-2 sm:py-3"
-                onClick={() => setWelqoOpen(false)}
-              >
-                {t.welqoModal.remindLater}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* ---------- Formulaire de contact ---------- */}
       <Dialog open={contactOpen} onOpenChange={setContactOpen}>
         <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-white via-genetics-dark-blue-50/30 to-genetics-gold-50/30">

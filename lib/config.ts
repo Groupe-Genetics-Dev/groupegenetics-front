@@ -5,5 +5,3 @@ export const SUPPORT_URL = process.env.NEXT_PUBLIC_SUPPORT_URL || "/support/logi
 
 // API groupegenetics-api, utilisée par le formulaire de contact (POST /contact/send-email)
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-
-export const WELQO_URL = "https://welqo.sn"

@@ -98,20 +98,6 @@ export const translations = {
       senegalOffice: "Bureau Sénégal",
       gambiaOffice: "Bureau Gambie",
     },
-    welqoModal: {
-      title: "Découvrez Welqo",
-      subtitle: "La solution intelligente pour la gestion de résidence",
-      description:
-        "Welqo révolutionne la gestion des visiteurs et la sécurité des résidences avec des QR codes intelligents et un suivi en temps réel.",
-      feature1: "Gestion visiteurs",
-      feature1Desc: "Contrôle d'accès intelligent",
-      feature2: "Suivi gardiens",
-      feature2Desc: "Monitoring en temps réel",
-      feature3: "QR Codes",
-      feature3Desc: "Technologie moderne",
-      visitWebsite: "Visiter le site",
-      remindLater: "Plus tard",
-    },
   },
   en: {
     nav: {
@@ -207,20 +193,6 @@ export const translations = {
       contactInfo: "Contact Information",
       senegalOffice: "Senegal Office",
       gambiaOffice: "Gambia Office",
-    },
-    welqoModal: {
-      title: "Discover Welqo",
-      subtitle: "The smart solution for residence management",
-      description:
-        "Welqo revolutionizes visitor management and residence security with smart QR codes and real-time monitoring.",
-      feature1: "Visitor Management",
-      feature1Desc: "Smart access control",
-      feature2: "Guard Tracking",
-      feature2Desc: "Real-time monitoring",
-      feature3: "QR Codes",
-      feature3Desc: "Modern technology",
-      visitWebsite: "Visit Website",
-      remindLater: "Remind Me Later",
     },
   },
 }
