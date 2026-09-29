@@ -25,7 +25,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ApiError, adminDashboardUrl, getMe, getToken, logout, type User } from "@/lib/auth"
+import { ApiError, getMe, getToken, logout, type User } from "@/lib/auth"
 import {
   CATEGORIES,
   PRIORITIES,
@@ -82,7 +82,7 @@ export default function SupportHome() {
     getMe(t)
       .then((me) => {
         if (me.role === "admin") {
-          window.location.href = adminDashboardUrl(t, me.name)
+          router.replace("/support/admin")
           return
         }
         setToken(t)

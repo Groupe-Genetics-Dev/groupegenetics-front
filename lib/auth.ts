@@ -1,6 +1,6 @@
 // Connexion au backend groupegenetics-api pour l'espace support
 
-import { ADMIN_URL, API_URL } from "./config"
+import { API_URL } from "./config"
 
 const TOKEN_KEY = "genetics_token"
 
@@ -85,9 +85,9 @@ export async function getMe(token: string) {
   return (await res.json()) as User
 }
 
-// Les administrateurs passent sur le tableau de bord (autre application) avec leur session
-export function adminDashboardUrl(token: string, name: string) {
-  return `${ADMIN_URL}/auth/callback#${new URLSearchParams({ token, name })}`
+// Page d'accueil selon le profil : tableau de bord pour les administrateurs, espace client sinon
+export function homeFor(role: Role) {
+  return role === "admin" ? "/support/admin" : "/support"
 }
 
 export function saveToken(token: string) {

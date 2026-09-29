@@ -7,7 +7,7 @@ import { ArrowRight, Loader2, Lock, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import AuthLayout from "@/components/support/AuthLayout"
 import { FormAlert, PasswordField, TextField, isEmail } from "@/components/support/fields"
-import { ApiError, adminDashboardUrl, login } from "@/lib/auth"
+import { ApiError, homeFor, login } from "@/lib/auth"
 
 type Errors = { email?: string; password?: string }
 
@@ -34,11 +34,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const session = await login(email, password)
-      if (session.role === "admin") {
-        window.location.href = adminDashboardUrl(session.access_token, session.user_name)
-      } else {
-        router.push("/support")
-      }
+      router.push(homeFor(session.role))
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "La connexion a échoué. Réessayez.")
       setLoading(false)
