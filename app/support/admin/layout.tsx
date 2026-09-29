@@ -4,16 +4,17 @@ import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { CheckCircle2, ExternalLink, FileText, LayoutDashboard, Loader2, LogOut, Menu, Users, X, XCircle } from "lucide-react"
+import { CheckCircle2, ExternalLink, FileText, LayoutDashboard, Loader2, LogOut, Menu, TriangleAlert, Users, X, XCircle } from "lucide-react"
 import { getMe, getToken, logout, type User } from "@/lib/auth"
 import { listAccounts } from "@/lib/admin"
 import { cn } from "@/lib/utils"
 import { AdminCtx, type Flash } from "@/components/support/admin-context"
 
 const NAV = [
-  { href: "/support/admin", label: "Tableau de bord", hint: "Incidents des clients", icon: LayoutDashboard },
-  { href: "/support/admin/accounts", label: "Gestion des comptes", hint: "Valider les inscriptions", icon: Users },
-  { href: "/support/admin/reports", label: "Rapports", hint: "Rapports PDF", icon: FileText },
+  { href: "/support/admin", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/support/admin/incidents", label: "Gestion des incidents", icon: TriangleAlert },
+  { href: "/support/admin/accounts", label: "Gestion des comptes", icon: Users },
+  { href: "/support/admin/reports", label: "Rapports", icon: FileText },
 ]
 
 // Espace administrateur : accessible uniquement aux comptes de rôle "admin"
@@ -71,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     )
   }
 
-  const isActive = (href: string) => (href === "/support/admin" ? pathname === href || pathname.startsWith("/support/admin/incidents") : pathname.startsWith(href))
+  const isActive = (href: string) => (href === "/support/admin" ? pathname === href : pathname.startsWith(href))
 
   const initials = session.user.name
     .split(/\s+/)
@@ -82,18 +83,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const sidebar = (
     <div className="flex h-full flex-col bg-gradient-to-b from-genetics-dark-blue-800 to-genetics-dark-blue-950 text-white">
-      <div className="flex items-center justify-between px-6 pb-6 pt-7">
-        <Link href="/support/admin" className="rounded-xl bg-white p-2 shadow-lg">
-          <Image src="/logo.png" alt="Genetics" width={120} height={48} className="h-9 w-auto" />
+      <div className="relative px-4 pb-6 pt-5">
+        <Link href="/support/admin" className="flex w-full items-center justify-center rounded-2xl bg-white px-4 py-4 shadow-lg">
+          <Image src="/logo.png" alt="Genetics" width={541} height={271} priority className="h-auto w-full max-w-[220px]" />
         </Link>
-        <button onClick={() => setMenuOpen(false)} aria-label="Fermer le menu" className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white lg:hidden">
+        <button
+          onClick={() => setMenuOpen(false)}
+          aria-label="Fermer le menu"
+          className="absolute -right-1 top-1 rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
+        >
           <X className="h-5 w-5" />
         </button>
       </div>
 
       <p className="px-6 text-[11px] font-semibold uppercase tracking-widest text-genetics-dark-blue-200/70">Administration</p>
       <nav className="mt-3 flex-1 space-y-1 px-3" aria-label="Administration">
-        {NAV.map(({ href, label, hint, icon: Icon }) => {
+        {NAV.map(({ href, label, icon: Icon }) => {
           const active = isActive(href)
           return (
             <Link
@@ -114,10 +119,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               >
                 <Icon className="h-[18px] w-[18px]" />
               </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold">{label}</span>
-                <span className="block truncate text-xs text-genetics-dark-blue-200">{hint}</span>
-              </span>
+              <span className="min-w-0 flex-1 text-[15px] font-semibold">{label}</span>
               {href.endsWith("accounts") && pendingAccounts > 0 && (
                 <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-white">{pendingAccounts}</span>
               )}
@@ -131,14 +133,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <ExternalLink className="h-4 w-4" />
           Voir le site
         </Link>
-        <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
-          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold">{initials}</span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold">{session.user.name}</span>
-            <span className="block truncate text-xs text-genetics-dark-blue-200">{session.user.email}</span>
-          </span>
-          <button onClick={signOut} title="Se déconnecter" aria-label="Se déconnecter" className="rounded-lg p-2 text-genetics-dark-blue-100 hover:bg-white/10 hover:text-white">
+        <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-accent text-base font-bold shadow-lg shadow-accent/30">
+              {initials}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold leading-snug">{session.user.name}</span>
+              <span className="block truncate text-xs text-genetics-dark-blue-200" title={session.user.email}>
+                {session.user.email}
+              </span>
+            </span>
+          </div>
+          <button
+            onClick={signOut}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-white/20"
+          >
             <LogOut className="h-4 w-4" />
+            Se déconnecter
           </button>
         </div>
       </div>

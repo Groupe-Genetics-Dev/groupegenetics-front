@@ -51,8 +51,8 @@ export default function AdminIncidentPage() {
   }
 
   const back = (
-    <Link href="/support/admin" className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary">
-      <ArrowLeft className="h-4 w-4" /> Retour au tableau de bord
+    <Link href="/support/admin/incidents" className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary">
+      <ArrowLeft className="h-4 w-4" /> Retour à la gestion des incidents
     </Link>
   )
 
