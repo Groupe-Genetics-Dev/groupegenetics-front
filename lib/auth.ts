@@ -13,6 +13,7 @@ export type User = {
   company?: string | null
   phone?: string | null
   createdAt: string
+  account_status: "PENDING" | "APPROVED" | "REJECTED"
   role: Role
 }
 
@@ -53,8 +54,11 @@ export async function login(email: string, password: string) {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ username: email, password }),
   })
-  if (res.status === 403) throw new ApiError("E-mail ou mot de passe incorrect.")
-  if (!res.ok) throw new ApiError(await errorMessage(res, "La connexion a échoué. Réessayez."))
+  if (!res.ok) {
+    const message = await errorMessage(res, "La connexion a échoué. Réessayez.")
+    // 403 "Invalid Credentials" = mauvais identifiants ; sinon compte en attente de validation ou refusé
+    throw new ApiError(message === "Invalid Credentials" ? "E-mail ou mot de passe incorrect." : message)
+  }
   const data: { access_token: string; user_name: string; role: Role } = await res.json()
   saveToken(data.access_token)
   return data
@@ -71,7 +75,7 @@ export async function register(data: RegisterData) {
     }),
   })
   if (!res.ok) throw new ApiError(await errorMessage(res, "La création du compte a échoué. Réessayez."))
-  return (await res.json()) as User
+  return (await res.json()) as Omit<User, "role">
 }
 
 export async function getMe(token: string) {

@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Eye, EyeOff, Loader2, MailCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,6 +17,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -36,14 +37,19 @@ export default function RegisterPage() {
     setError(null)
     setLoading(true)
     try {
-      await register({
+      const account = await register({
         name: get("name"),
         email: get("email"),
         company: get("company"),
         phone: get("phone"),
         password,
       })
-      // Compte créé : connexion automatique puis accès à l'espace support
+      // Compte client : il doit d'abord être validé par un administrateur
+      if (account.account_status !== "APPROVED") {
+        setPendingEmail(account.email)
+        setLoading(false)
+        return
+      }
       const session = await login(get("email"), password)
       if (session.role === "admin") {
         window.location.href = adminDashboardUrl(session.access_token, session.user_name)
@@ -54,6 +60,32 @@ export default function RegisterPage() {
       setError(err instanceof ApiError ? err.message : "La création du compte a échoué. Réessayez.")
       setLoading(false)
     }
+  }
+
+  if (pendingEmail) {
+    return (
+      <AuthLayout title="Demande envoyée" subtitle="Votre compte a bien été créé.">
+        <div className="rounded-2xl border border-genetics-dark-blue-100 bg-white p-6 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
+            <MailCheck className="h-7 w-7 text-white" />
+          </div>
+          <h2 className="mt-5 text-xl font-bold text-slate-900">Compte en cours de validation</h2>
+          <p className="mt-3 text-slate-600">
+            Notre équipe va vérifier votre demande. Vous recevrez un e-mail à{" "}
+            <strong className="text-slate-900 break-all">{pendingEmail}</strong> dès que votre compte sera activé.
+          </p>
+          <p className="mt-2 text-sm text-slate-500">Un e-mail de confirmation vient de vous être envoyé.</p>
+        </div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Button asChild variant="outline" className="h-11 flex-1">
+            <Link href="/">Retour au site</Link>
+          </Button>
+          <Button asChild className="h-11 flex-1 bg-primary hover:bg-genetics-dark-blue-700">
+            <Link href="/support/login">Page de connexion</Link>
+          </Button>
+        </div>
+      </AuthLayout>
+    )
   }
 
   return (
