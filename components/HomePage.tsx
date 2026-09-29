@@ -467,9 +467,9 @@ export default function HomePage() {
                     : "Leader in intelligent technological security in Africa"}
                 </p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-genetics-gold-100 shadow-sm">
+              <div className="bg-teal-50 rounded-xl p-4 border border-teal-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Target className="h-4 w-4 text-white" />
                   </div>
                   <h4 className="font-bold text-slate-900 text-sm">{t.about.mission}</h4>
@@ -587,9 +587,9 @@ export default function HomePage() {
             </div>
 
             {/* Mission */}
-            <div className="lg:col-span-2 bg-genetics-gold-50 rounded-2xl p-8 border border-genetics-gold-100">
+            <div className="lg:col-span-2 bg-teal-50 rounded-2xl p-8 border border-teal-100">
               <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mr-3">
+                <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center mr-3">
                   <Target className="h-5 w-5 text-white" />
                 </div>
                 {t.about.mission}
@@ -600,7 +600,7 @@ export default function HomePage() {
                   (item, i) => (
                     <li key={item} className="flex items-start">
                       <div
-                        className={`w-2 h-2 mt-2 ${i % 2 ? "bg-accent" : "bg-primary"} rounded-full mr-3 flex-shrink-0`}
+                        className={`w-2 h-2 mt-2 ${i % 2 ? "bg-teal-500" : "bg-primary"} rounded-full mr-3 flex-shrink-0`}
                       />
                       {item}
                     </li>
@@ -622,34 +622,46 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
-            {services.map((service) => {
+            {services.map((service, index) => {
               const isPrimary = service.color === "primary"
               return (
                 <Card
                   key={service.title}
-                  className={`h-full border-0 border-t-4 ${
-                    isPrimary ? "border-t-primary" : "border-t-accent"
-                  } shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300`}
+                  className={`${index === services.length - 1 ? "md:col-span-2 lg:col-span-1" : ""} h-full flex flex-col overflow-hidden border-0 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300`}
                 >
-                  <CardContent className="p-6 lg:p-8">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div
-                        className={`w-14 h-14 ${
-                          isPrimary ? "bg-primary" : "bg-accent"
-                        } rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg`}
-                      >
+                  {/* Bandeau */}
+                  <div
+                    className={`relative overflow-hidden px-6 lg:px-8 py-7 min-h-[168px] lg:min-h-[216px] flex flex-col justify-between ${
+                      isPrimary
+                        ? "bg-gradient-to-br from-genetics-dark-blue-700 via-genetics-dark-blue-800 to-genetics-dark-blue-950 text-white"
+                        : "bg-gradient-to-br from-genetics-gold-400 via-accent to-genetics-gold-600 text-white"
+                    }`}
+                  >
+                    <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full border-[14px] border-white/10" />
+                    <div className="absolute -bottom-12 right-16 w-24 h-24 rounded-full bg-white/5" />
+                    <div className="relative flex items-start justify-between gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-white/15 ring-1 ring-white/25 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                         <service.icon className="h-7 w-7 text-white" />
                       </div>
-                      <div>
-                        <h3 className="text-lg xl:text-xl font-bold text-slate-900 leading-snug">{service.title}</h3>
-                        <p className="text-slate-600 text-sm">{service.description}</p>
-                      </div>
+                      <span className="rounded-full bg-white/15 ring-1 ring-white/25 px-3 py-1 text-xs font-semibold whitespace-nowrap">
+                        {service.subServices.length} services
+                      </span>
                     </div>
-                    <ul className="space-y-2">
+                    <div className="relative mt-5">
+                      <h3 className="text-lg xl:text-xl font-bold leading-snug">{service.title}</h3>
+                      <p className={`text-sm mt-1 ${isPrimary ? "text-genetics-dark-blue-100" : "text-white/90"}`}>
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Services : les éléments s'étirent pour que toutes les cartes finissent au même niveau */}
+                  <CardContent className="flex-1 flex flex-col p-6 lg:p-8">
+                    <ul className="flex-1 flex flex-col gap-2">
                       {service.subServices.map((sub) => (
                         <li
                           key={sub.name}
-                          className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                          className="flex-1 min-h-[48px] flex items-center gap-3 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
                         >
                           <div
                             className={`w-8 h-8 ${
