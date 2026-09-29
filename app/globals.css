@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-white text-slate-700 antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply text-navy-950;
+  }
+  ::selection {
+    @apply bg-gold-300 text-navy-950;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2;
+  }
+  .btn-primary {
+    @apply btn bg-navy-800 text-white shadow-lg shadow-navy-800/20 hover:bg-navy-700;
+  }
+  .btn-gold {
+    @apply btn bg-gold-500 text-navy-950 shadow-lg shadow-gold-500/25 hover:bg-gold-400;
+  }
+  .btn-ghost {
+    @apply btn border border-white/25 text-white hover:bg-white/10;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full bg-gold-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-600 ring-1 ring-gold-100;
+  }
+  .section {
+    @apply py-20 sm:py-28;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
