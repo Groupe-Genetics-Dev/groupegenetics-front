@@ -4,17 +4,16 @@ import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { CheckCircle2, FileText, LayoutDashboard, Loader2, LogOut, Users, XCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { CheckCircle2, ExternalLink, FileText, LayoutDashboard, Loader2, LogOut, Menu, Users, X, XCircle } from "lucide-react"
 import { getMe, getToken, logout, type User } from "@/lib/auth"
 import { listAccounts } from "@/lib/admin"
 import { cn } from "@/lib/utils"
 import { AdminCtx, type Flash } from "@/components/support/admin-context"
 
 const NAV = [
-  { href: "/support/admin", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/support/admin/accounts", label: "Comptes", icon: Users },
-  { href: "/support/admin/reports", label: "Rapports", icon: FileText },
+  { href: "/support/admin", label: "Tableau de bord", hint: "Incidents des clients", icon: LayoutDashboard },
+  { href: "/support/admin/accounts", label: "Gestion des comptes", hint: "Valider les inscriptions", icon: Users },
+  { href: "/support/admin/reports", label: "Rapports", hint: "Rapports PDF", icon: FileText },
 ]
 
 // Espace administrateur : accessible uniquement aux comptes de rôle "admin"
@@ -24,6 +23,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [session, setSession] = useState<{ token: string; user: User } | null>(null)
   const [flashes, setFlashes] = useState<Flash[]>([])
   const [pendingAccounts, setPendingAccounts] = useState(0)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Referme le menu mobile à chaque changement de page
+  useEffect(() => setMenuOpen(false), [pathname])
 
   const signOut = useCallback(() => {
     logout()
@@ -70,54 +73,110 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const isActive = (href: string) => (href === "/support/admin" ? pathname === href || pathname.startsWith("/support/admin/incidents") : pathname.startsWith(href))
 
+  const initials = session.user.name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
+
+  const sidebar = (
+    <div className="flex h-full flex-col bg-gradient-to-b from-genetics-dark-blue-800 to-genetics-dark-blue-950 text-white">
+      <div className="flex items-center justify-between px-6 pb-6 pt-7">
+        <Link href="/support/admin" className="rounded-xl bg-white p-2 shadow-lg">
+          <Image src="/logo.png" alt="Genetics" width={120} height={48} className="h-9 w-auto" />
+        </Link>
+        <button onClick={() => setMenuOpen(false)} aria-label="Fermer le menu" className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white lg:hidden">
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      <p className="px-6 text-[11px] font-semibold uppercase tracking-widest text-genetics-dark-blue-200/70">Administration</p>
+      <nav className="mt-3 flex-1 space-y-1 px-3" aria-label="Administration">
+        {NAV.map(({ href, label, hint, icon: Icon }) => {
+          const active = isActive(href)
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "group relative flex items-center gap-3 rounded-xl px-3 py-3 transition-colors",
+                active ? "bg-white/10 text-white" : "text-genetics-dark-blue-100 hover:bg-white/5 hover:text-white",
+              )}
+            >
+              {active && <span className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-accent" />}
+              <span
+                className={cn(
+                  "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg transition-colors",
+                  active ? "bg-accent text-white" : "bg-white/5 text-genetics-dark-blue-100 group-hover:bg-white/10",
+                )}
+              >
+                <Icon className="h-[18px] w-[18px]" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold">{label}</span>
+                <span className="block truncate text-xs text-genetics-dark-blue-200">{hint}</span>
+              </span>
+              {href.endsWith("accounts") && pendingAccounts > 0 && (
+                <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-white">{pendingAccounts}</span>
+              )}
+            </Link>
+          )
+        })}
+      </nav>
+
+      <div className="space-y-2 border-t border-white/10 p-4">
+        <Link href="/" target="_blank" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-genetics-dark-blue-100 hover:bg-white/5 hover:text-white">
+          <ExternalLink className="h-4 w-4" />
+          Voir le site
+        </Link>
+        <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
+          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold">{initials}</span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-sm font-semibold">{session.user.name}</span>
+            <span className="block truncate text-xs text-genetics-dark-blue-200">{session.user.email}</span>
+          </span>
+          <button onClick={signOut} title="Se déconnecter" aria-label="Se déconnecter" className="rounded-lg p-2 text-genetics-dark-blue-100 hover:bg-white/10 hover:text-white">
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+  const current = NAV.find((n) => isActive(n.href))
+
   return (
     <AdminCtx.Provider value={{ ...session, flash, pendingAccounts, refreshPending, signOut }}>
       <div className="min-h-screen bg-slate-50">
-        <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-md">
-          <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
-            <div className="flex items-center gap-3">
-              <Link href="/support/admin" className="flex-shrink-0">
-                <Image src="/logo.png" alt="Genetics" width={120} height={48} className="h-10 w-auto" />
-              </Link>
-              <span className="hidden rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary sm:inline">
-                Administration
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="hidden text-sm text-slate-600 md:block">
-                Connecté : <strong className="text-slate-900">{session.user.name}</strong>
-              </span>
-              <Button variant="outline" onClick={signOut} className="gap-2">
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Se déconnecter</span>
-              </Button>
-            </div>
-          </div>
-          <nav className="container mx-auto flex gap-1 overflow-x-auto px-4 sm:px-6" aria-label="Administration">
-            {NAV.map(({ href, label, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                aria-current={isActive(href) ? "page" : undefined}
-                className={cn(
-                  "flex items-center gap-2 whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition-colors",
-                  isActive(href) ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-slate-900",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-                {href.endsWith("accounts") && pendingAccounts > 0 && (
-                  <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-white">{pendingAccounts}</span>
-                )}
-              </Link>
-            ))}
-          </nav>
-        </header>
+        {/* Barre latérale fixe (desktop) */}
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 lg:block">{sidebar}</aside>
 
-        <main className="container mx-auto px-4 py-8 sm:px-6">{children}</main>
+        {/* Barre latérale mobile (tiroir) */}
+        <div className={cn("fixed inset-0 z-50 lg:hidden", menuOpen ? "visible" : "invisible")}>
+          <div
+            onClick={() => setMenuOpen(false)}
+            className={cn("absolute inset-0 bg-genetics-dark-blue-950/60 transition-opacity", menuOpen ? "opacity-100" : "opacity-0")}
+          />
+          <aside className={cn("absolute inset-y-0 left-0 w-72 max-w-[85%] shadow-2xl transition-transform duration-300", menuOpen ? "translate-x-0" : "-translate-x-full")}>
+            {sidebar}
+          </aside>
+        </div>
+
+        {/* Contenu de la fonctionnalité sélectionnée */}
+        <div className="lg:pl-72">
+          <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur-md lg:hidden">
+            <button onClick={() => setMenuOpen(true)} aria-label="Ouvrir le menu" className="rounded-lg p-2 text-slate-700 hover:bg-slate-100">
+              <Menu className="h-6 w-6" />
+            </button>
+            <span className="font-semibold text-slate-900">{current?.label ?? "Administration"}</span>
+          </header>
+          <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">{children}</main>
+        </div>
 
         {/* Notifications */}
-        <div className="fixed bottom-4 right-4 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2" aria-live="polite">
+        <div className="fixed bottom-4 right-4 z-[60] flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2" aria-live="polite">
           {flashes.map((f) => (
             <div
               key={f.id}

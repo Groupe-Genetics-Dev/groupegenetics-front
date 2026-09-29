@@ -9,7 +9,7 @@ import { ApiError } from "@/lib/auth"
 import { downloadReport, generateReport, listReports, saveBlob } from "@/lib/admin"
 
 const inputClass =
-  "mt-1 h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+  "mt-1 h-11 w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 const iso = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -96,7 +96,7 @@ export default function ReportsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
-        <Card className="border-0 shadow-lg lg:col-span-2">
+        <Card className="min-w-0 border-0 shadow-lg lg:col-span-2">
           <CardContent className="p-6">
             <h2 className="flex items-center gap-2 font-bold text-slate-900">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
@@ -118,11 +118,11 @@ export default function ReportsPage() {
             </div>
             <form onSubmit={generate} className="mt-5 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="text-sm font-medium text-slate-800">
+                <label className="min-w-0 text-sm font-medium text-slate-800">
                   Du
                   <input type="date" required value={start} max={end} onChange={(e) => setRange([e.target.value, end])} className={inputClass} />
                 </label>
-                <label className="text-sm font-medium text-slate-800">
+                <label className="min-w-0 text-sm font-medium text-slate-800">
                   Au
                   <input type="date" required value={end} min={start} onChange={(e) => setRange([start, e.target.value])} className={inputClass} />
                 </label>
@@ -135,7 +135,7 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg lg:col-span-3">
+        <Card className="min-w-0 border-0 shadow-lg lg:col-span-3">
           <CardContent className="p-0">
             <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
               <h2 className="font-bold text-slate-900">Rapports déjà générés</h2>
