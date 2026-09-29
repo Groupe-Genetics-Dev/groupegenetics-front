@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ArrowRight, Building2, CheckCircle2, Loader2, Lock, Mail, MailCheck, Phone, UserRound } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import AuthLayout from "@/components/support/AuthLayout"
-import { FormAlert, PASSWORD_RULES, PasswordField, PasswordStrength, TextField, isEmail } from "@/components/support/fields"
+import { FormAlert, PasswordField, TextField, isEmail } from "@/components/support/fields"
 import { ApiError, register } from "@/lib/auth"
 
 type Field = "name" | "email" | "phone" | "password" | "confirm" | "terms"
@@ -18,7 +18,7 @@ function validate(values: Record<Field, string>, accepted: boolean): Errors {
   else if (!isEmail(values.email)) errors.email = "Cette adresse e-mail n'est pas valide."
   if (values.phone && !/^\+?[\d\s().-]{8,}$/.test(values.phone)) errors.phone = "Numéro de téléphone invalide."
   if (!values.password) errors.password = "Choisissez un mot de passe."
-  else if (!PASSWORD_RULES[0].test(values.password)) errors.password = "Le mot de passe doit contenir au moins 8 caractères."
+  else if (values.password.length < 8) errors.password = "Le mot de passe doit contenir au moins 8 caractères."
   if (!values.confirm) errors.confirm = "Confirmez votre mot de passe."
   else if (values.confirm !== values.password) errors.confirm = "Les deux mots de passe ne correspondent pas."
   if (!accepted) errors.terms = "Vous devez accepter l'utilisation de vos données pour continuer."
@@ -112,16 +112,15 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout mode="register" title="Créer votre compte" subtitle="Rejoignez l'espace support Genetics en moins d'une minute.">
-      <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      <form onSubmit={handleSubmit} noValidate className="space-y-4">
         <fieldset className="space-y-4">
-          <legend className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Vos informations</legend>
           <TextField
             id="name"
             name="name"
             label="Nom complet"
             icon={UserRound}
             autoComplete="name"
-            placeholder="Prénom et nom"
+            placeholder="Entrer votre nom complet"
             error={errors.name}
             onChange={() => clear("name")}
           />
@@ -129,56 +128,50 @@ export default function RegisterPage() {
             id="email"
             name="email"
             type="email"
-            label="Adresse e-mail professionnelle"
+            label="Adresse e-mail"
             icon={Mail}
             autoComplete="email"
-            placeholder="vous@entreprise.com"
+            placeholder="Entrer votre adresse e-mail"
             error={errors.email}
             onChange={() => clear("email")}
           />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <TextField id="company" name="company" label="Entreprise" icon={Building2} autoComplete="organization" placeholder="Nom de l'entreprise" optional />
-            <TextField
-              id="phone"
-              name="phone"
-              type="tel"
-              label="Téléphone"
-              icon={Phone}
-              autoComplete="tel"
-              placeholder="+221 77 000 00 00"
-              optional
-              error={errors.phone}
-              onChange={() => clear("phone")}
-            />
-          </div>
+          <TextField id="company" name="company" label="Entreprise" icon={Building2} autoComplete="organization" placeholder="Entrer votre entreprise" optional />
+          <TextField
+            id="phone"
+            name="phone"
+            type="tel"
+            label="Téléphone"
+            icon={Phone}
+            autoComplete="tel"
+            placeholder="Entrer votre numéro de téléphone"
+            optional
+            error={errors.phone}
+            onChange={() => clear("phone")}
+          />
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Sécurité</legend>
-          <div>
-            <PasswordField
-              id="password"
-              name="password"
-              label="Mot de passe"
-              icon={Lock}
-              autoComplete="new-password"
-              placeholder="Choisissez un mot de passe"
-              value={password}
-              error={errors.password}
-              onChange={(e) => {
-                setPassword(e.target.value)
-                clear("password")
-              }}
-            />
-            <PasswordStrength password={password} />
-          </div>
+          <PasswordField
+            id="password"
+            name="password"
+            label="Mot de passe"
+            icon={Lock}
+            autoComplete="new-password"
+            placeholder="Entrer votre mot de passe"
+            value={password}
+            error={errors.password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              clear("password")
+            }}
+          />
           <PasswordField
             id="confirm"
             name="confirm"
             label="Confirmer le mot de passe"
             icon={Lock}
             autoComplete="new-password"
-            placeholder="Retapez le mot de passe"
+            placeholder="Entrer à nouveau votre mot de passe"
             value={confirm}
             error={errors.confirm}
             hint={confirm && confirm === password ? "✓ Les mots de passe correspondent" : undefined}

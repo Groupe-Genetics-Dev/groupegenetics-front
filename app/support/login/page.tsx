@@ -46,7 +46,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthLayout mode="login" title="Bon retour parmi nous" subtitle="Connectez-vous pour accéder à votre espace support.">
+    <AuthLayout mode="login" title="Se connecter" subtitle="Connectez-vous pour accéder à votre espace support.">
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <TextField
           id="email"
@@ -55,7 +55,7 @@ export default function LoginPage() {
           label="Adresse e-mail"
           icon={Mail}
           autoComplete="email"
-          placeholder="vous@entreprise.com"
+          placeholder="Entrer votre adresse e-mail"
           error={errors.email}
           onChange={() => errors.email && setErrors((e) => ({ ...e, email: undefined }))}
         />
@@ -65,7 +65,7 @@ export default function LoginPage() {
           label="Mot de passe"
           icon={Lock}
           autoComplete="current-password"
-          placeholder="Votre mot de passe"
+          placeholder="Entrer votre mot de passe"
           error={errors.password}
           onChange={() => errors.password && setErrors((e) => ({ ...e, password: undefined }))}
         />

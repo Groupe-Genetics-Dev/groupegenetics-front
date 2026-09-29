@@ -25,7 +25,7 @@ export default function AuthLayout({
     <div className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       {/* Panneau de présentation (desktop) */}
       <aside className="relative hidden overflow-hidden text-white lg:block">
-        <Image src="/hero-bg.jpg" alt="" fill priority sizes="45vw" className="object-cover" />
+        <Image src="/support-bg.jpg" alt="" fill priority sizes="45vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-br from-genetics-dark-blue-950/95 via-genetics-dark-blue-800/90 to-genetics-dark-blue-950/95" />
         <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full border-[28px] border-accent/20" />
         <div className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-white/5" />

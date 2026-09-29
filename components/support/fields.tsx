@@ -1,7 +1,7 @@
 "use client"
 
 import { forwardRef, useState, type InputHTMLAttributes } from "react"
-import { AlertCircle, Check, Eye, EyeOff, type LucideIcon } from "lucide-react"
+import { AlertCircle, Eye, EyeOff, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type FieldProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -78,63 +78,6 @@ export function PasswordField(props: Omit<FieldProps, "type">) {
       >
         {visible ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
       </button>
-    </div>
-  )
-}
-
-export const PASSWORD_RULES = [
-  { label: "8 caractères minimum", test: (p: string) => p.length >= 8 },
-  { label: "Une majuscule et une minuscule", test: (p: string) => /[a-z]/.test(p) && /[A-Z]/.test(p) },
-  { label: "Un chiffre", test: (p: string) => /\d/.test(p) },
-  { label: "Un caractère spécial", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
-]
-
-const LEVELS = [
-  { label: "Trop faible", color: "bg-red-500", text: "text-red-600" },
-  { label: "Faible", color: "bg-orange-500", text: "text-orange-600" },
-  { label: "Moyen", color: "bg-amber-500", text: "text-amber-600" },
-  { label: "Bon", color: "bg-lime-500", text: "text-lime-700" },
-  { label: "Excellent", color: "bg-emerald-500", text: "text-emerald-600" },
-]
-
-// Jauge de robustesse du mot de passe + règles cochées en direct
-export function PasswordStrength({ password }: { password: string }) {
-  const passed = PASSWORD_RULES.filter((r) => r.test(password)).length
-  const score = password.length === 0 ? 0 : Math.max(1, passed + (password.length >= 12 ? 1 : 0) - 1)
-  const level = LEVELS[Math.min(score, 4)]
-  return (
-    <div className="mt-3 rounded-xl bg-slate-50 p-3" aria-live="polite">
-      <div className="flex items-center gap-3">
-        <div className="flex flex-1 gap-1">
-          {[1, 2, 3, 4].map((i) => (
-            <span
-              key={i}
-              className={cn("h-1.5 flex-1 rounded-full transition-colors", password && i <= score ? level.color : "bg-slate-200")}
-            />
-          ))}
-        </div>
-        <span className={cn("w-20 text-right text-xs font-semibold", password ? level.text : "text-slate-400")}>
-          {password ? level.label : "Robustesse"}
-        </span>
-      </div>
-      <ul className="mt-2.5 grid grid-cols-1 gap-1 sm:grid-cols-2">
-        {PASSWORD_RULES.map((rule) => {
-          const ok = rule.test(password)
-          return (
-            <li key={rule.label} className={cn("flex items-center gap-1.5 text-xs", ok ? "text-emerald-700" : "text-slate-500")}>
-              <span
-                className={cn(
-                  "flex h-4 w-4 items-center justify-center rounded-full",
-                  ok ? "bg-emerald-500 text-white" : "bg-slate-200 text-transparent",
-                )}
-              >
-                <Check className="h-3 w-3" strokeWidth={3} />
-              </span>
-              {rule.label}
-            </li>
-          )
-        })}
-      </ul>
     </div>
   )
 }

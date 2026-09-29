@@ -355,7 +355,7 @@ export default function SupportHome() {
               <Label htmlFor="title" className="text-slate-900 font-medium">
                 Titre
               </Label>
-              <Input id="title" name="title" required maxLength={150} placeholder="Ex. : Plus d'accès internet au bureau" className="mt-1 h-10 bg-white" />
+              <Input id="title" name="title" required maxLength={150} placeholder="Entrer le titre de l'incident" className="mt-1 h-10 bg-white" />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -392,7 +392,7 @@ export default function SupportHome() {
                 name="description"
                 required
                 rows={5}
-                placeholder="Que se passe-t-il ? Depuis quand ? Quels équipements sont concernés ?"
+                placeholder="Entrer la description du problème (depuis quand, équipements concernés...)"
                 className="mt-1 bg-white"
               />
             </div>
