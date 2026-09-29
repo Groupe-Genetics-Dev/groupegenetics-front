@@ -6,7 +6,6 @@ import Link from "next/link"
 import {
   ArrowRight,
   Camera,
-  ChevronDown,
   Cloud,
   Code,
   ExternalLink,
@@ -58,23 +57,7 @@ type Service = {
 
 type SendStatus = "idle" | "sending" | "sent" | "error"
 
-// Motif décoratif du hero : couleurs tirées une seule fois côté client
-function DecoGrid() {
-  const [colors, setColors] = useState<boolean[]>(() => Array(9).fill(false))
-  useEffect(() => {
-    setColors(Array.from({ length: 9 }, () => Math.random() > 0.5))
-  }, [])
-  return (
-    <div className="absolute top-1/4 left-1/4 grid grid-cols-3 gap-2 opacity-30">
-      {colors.map((gold, i) => (
-        <div key={i} className={`w-4 h-4 ${gold ? "bg-accent" : "bg-primary"}`} />
-      ))}
-    </div>
-  )
-}
-
 export default function HomePage() {
-  const [openServices, setOpenServices] = useState<Set<number>>(new Set())
   const [menuOpen, setMenuOpen] = useState(false)
   const [lang, setLang] = useState<Lang>("fr")
   const [welqoOpen, setWelqoOpen] = useState(false)
@@ -97,13 +80,6 @@ export default function HomePage() {
     e?.preventDefault()
     setSendStatus("idle")
     setContactOpen(true)
-  }
-
-  const toggleService = (index: number) => {
-    const next = new Set(openServices)
-    if (next.has(index)) next.delete(index)
-    else next.add(index)
-    setOpenServices(next)
   }
 
   const handleContactSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -188,7 +164,6 @@ export default function HomePage() {
     { href: "#accueil", label: t.nav.home },
     { href: "#apropos", label: t.nav.about },
     { href: "#solutions", label: t.nav.solutions },
-    { href: "#realisations", label: t.nav.projects },
     { href: SUPPORT_URL, label: t.nav.support },
   ]
 
@@ -485,29 +460,29 @@ export default function HomePage() {
       </nav>
 
       {/* ---------- Accueil ---------- */}
-      <section
-        id="accueil"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-genetics-dark-blue-50"
-      >
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-20 left-20 w-32 h-32 border-4 border-accent rotate-45" />
-          <div className="absolute top-40 right-32 w-24 h-24 border-2 border-primary rotate-12" />
-          <div className="absolute bottom-32 left-1/3 w-40 h-40 border-8 border-accent rotate-45" />
-          <div className="absolute top-1/2 right-1/4 w-28 h-28 border-4 border-primary rotate-12" />
-          <DecoGrid />
-        </div>
+      <section id="accueil" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-genetics-dark-blue-950">
+        <Image
+          src="/hero-bg.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {/* Voile bleu pour garder le texte lisible sur la photo */}
+        <div className="absolute inset-0 bg-gradient-to-b from-genetics-dark-blue-950/80 via-genetics-dark-blue-800/60 to-genetics-dark-blue-950/90" />
 
         {/* Version desktop / tablette */}
         <div className="relative z-10 text-center max-w-6xl mx-auto px-4 sm:px-6 hidden md:block">
-          <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 mb-6 leading-tight">
+          <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
             {t.hero.title}
-            <span className="text-primary">{t.hero.business}</span>
+            <span className="text-genetics-dark-blue-100">{t.hero.business}</span>
             {t.hero.by}
             <span className="text-accent">{t.hero.technology}</span>
           </h1>
-          <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed">{t.hero.subtitle}</p>
+          <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">{t.hero.subtitle}</p>
           <div className="flex flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-primary hover:bg-genetics-dark-blue-700 text-lg px-8 py-3">
+            <Button asChild size="lg" className="bg-white text-primary hover:bg-slate-100 text-lg px-8 py-3">
               <Link href="#solutions">
                 {t.hero.discoverServices}
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -521,14 +496,14 @@ export default function HomePage() {
 
         {/* Version mobile */}
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 md:hidden">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
             {t.hero.titleMobile}
-            <span className="text-primary">{t.hero.it}</span>
+            <span className="text-accent">{t.hero.it}</span>
             {t.hero.trust}
           </h1>
-          <p className="text-lg text-slate-600 mb-6 leading-relaxed">{t.hero.subtitleMobile}</p>
+          <p className="text-lg text-slate-200 mb-6 leading-relaxed">{t.hero.subtitleMobile}</p>
           <div className="flex flex-col gap-3 justify-center">
-            <Button asChild size="lg" className="bg-primary hover:bg-genetics-dark-blue-700 px-6 py-3">
+            <Button asChild size="lg" className="bg-white text-primary hover:bg-slate-100 px-6 py-3">
               <Link href="#solutions">
                 {t.hero.ourServices}
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -543,7 +518,7 @@ export default function HomePage() {
 
       {/* ---------- À propos ---------- */}
       <section id="apropos" className="py-20 bg-white scroll-mt-20">
-        <div className="container mx-auto px-6">
+        <div className="w-full px-6 lg:px-12 xl:px-16">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">{t.about.title}</h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">{t.about.tagline}</p>
@@ -625,109 +600,94 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Desktop */}
-          <div className="hidden lg:grid lg:grid-cols-3 gap-12 items-center">
-            <div className="lg:col-span-2">
-              <Card className="border-0 shadow-2xl bg-white overflow-hidden">
-                <CardContent className="p-8 lg:p-12">
-                  <div className="relative">
-                    <div className="absolute -top-4 -left-4 w-20 h-20 bg-primary/10 rounded-full" />
-                    <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-accent/10 rounded-full" />
-                    <p className="text-lg text-slate-700 leading-relaxed mb-8 relative z-10">
-                      <span className="text-2xl font-bold text-primary">GENETICS</span> {t.about.description1}
-                    </p>
-                    <p className="text-lg text-slate-700 leading-relaxed mb-8 relative z-10">{t.about.description2}</p>
-
-                    <div className="bg-genetics-dark-blue-50 rounded-2xl p-6 mb-8 border border-genetics-dark-blue-100">
-                      <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3">
-                          <Eye className="h-4 w-4 text-white" />
-                        </div>
-                        {t.about.vision}
-                      </h4>
-                      <p className="text-slate-700 leading-relaxed">{t.about.visionText}</p>
-                    </div>
-
-                    <div className="bg-genetics-gold-50 rounded-2xl p-6 mb-8 border border-genetics-gold-100">
-                      <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                        <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center mr-3">
-                          <Target className="h-4 w-4 text-white" />
-                        </div>
-                        {t.about.mission}
-                      </h4>
-                      <p className="text-slate-700 leading-relaxed mb-4">{t.about.missionText}</p>
-                      <ul className="space-y-2 text-slate-700">
-                        {[t.about.missionItem1, t.about.missionItem2, t.about.missionItem3, t.about.missionItem4].map(
-                          (item, i) => (
-                            <li key={item} className="flex items-center">
-                              <div className={`w-2 h-2 ${i % 2 ? "bg-accent" : "bg-primary"} rounded-full mr-3 flex-shrink-0`} />
-                              {item}
-                            </li>
-                          ),
-                        )}
-                      </ul>
-                    </div>
-
-                    <div className="bg-slate-50 rounded-2xl p-6 border border-genetics-dark-blue-100">
-                      <div className="flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                          <h4 className="text-lg font-semibold text-slate-900 mb-1">{t.about.ceo}</h4>
-                          <p className="text-slate-600">{t.about.ceoRole}</p>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                            <Phone className="h-6 w-6 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-sm text-slate-600">{t.about.callQuestion}</p>
-                            <a
-                              href="tel:+221788790000"
-                              className="text-lg font-bold text-primary hover:text-accent transition-colors"
-                            >
-                              +221 78 879 00 00
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+          {/* Desktop : pleine largeur */}
+          <div className="hidden lg:grid lg:grid-cols-3 gap-8">
+            {/* Présentation + contact du CEO */}
+            <Card className="lg:col-span-2 border-0 shadow-xl bg-white overflow-hidden">
+              <CardContent className="p-10 xl:p-12 h-full flex flex-col">
+                <p className="text-lg xl:text-xl text-slate-700 leading-relaxed mb-6">
+                  <span className="text-2xl xl:text-3xl font-bold text-primary">GENETICS</span>{" "}
+                  {t.about.description1.replace(/^GENETICS\s*/, "")}
+                </p>
+                <p className="text-lg text-slate-700 leading-relaxed mb-8">{t.about.description2}</p>
+                <div className="mt-auto bg-slate-50 rounded-2xl p-6 border border-genetics-dark-blue-100 flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <h4 className="text-lg font-semibold text-slate-900 mb-1">{t.about.ceo}</h4>
+                    <p className="text-slate-600">{t.about.ceoRole}</p>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="relative flex flex-col items-center justify-center space-y-8">
-              <div className="relative">
-                <div className="w-80 h-80 bg-genetics-dark-blue-50 rounded-full border-4 border-primary/30 flex items-center justify-center relative overflow-hidden">
-                  <div className="text-center z-10">
-                    <div className="text-8xl font-black text-primary mb-2">10+</div>
-                    <div className="text-slate-900 text-xl font-bold mb-2">{t.about.years}</div>
-                    <div className="text-slate-600 text-lg">{t.about.experience}</div>
-                  </div>
-                  <div className="absolute top-8 right-8 w-4 h-4 bg-primary rounded-full" />
-                  <div className="absolute bottom-12 left-12 w-3 h-3 bg-accent rounded-full" />
-                  <div className="absolute top-20 left-8 w-2 h-2 bg-primary rounded-full" />
+                  <a href="tel:+221788790000" className="flex items-center space-x-3 group">
+                    <div className="w-12 h-12 bg-primary group-hover:bg-accent transition-colors rounded-full flex items-center justify-center">
+                      <Phone className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600">{t.about.callQuestion}</p>
+                      <p className="text-lg font-bold text-primary group-hover:text-accent transition-colors">
+                        +221 78 879 00 00
+                      </p>
+                    </div>
+                  </a>
                 </div>
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-primary/30 rounded-full" />
-                <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-accent/30 rounded-full" />
+              </CardContent>
+            </Card>
+
+            {/* Années d'expérience + valeurs */}
+            <div className="relative overflow-hidden rounded-xl bg-primary text-white p-10 xl:p-12 flex flex-col justify-between shadow-xl">
+              <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full border-[18px] border-accent/40" />
+              <div className="absolute -bottom-20 -left-10 w-48 h-48 rounded-full bg-white/5" />
+              <div className="relative">
+                <div className="text-8xl font-black leading-none">
+                  10<span className="text-accent">+</span>
+                </div>
+                <div className="mt-3 text-xl font-bold">{t.about.years}</div>
+                <div className="text-genetics-dark-blue-100 text-lg">{t.about.experience}</div>
               </div>
-              <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+              <div className="relative grid grid-cols-2 gap-3 mt-10">
                 {[
-                  { label: t.about.expertise, desc: t.about.expertiseDesc, gold: false },
-                  { label: t.about.agility, desc: t.about.agilityDesc, gold: true },
-                  { label: t.about.efficiency, desc: t.about.efficiencyDesc, gold: false },
-                  { label: t.about.discipline, desc: t.about.disciplineDesc, gold: true },
-                ].map(({ label, desc, gold }) => (
-                  <div
-                    key={label}
-                    className={`bg-white/90 backdrop-blur-sm border ${
-                      gold ? "border-accent/30" : "border-primary/30"
-                    } rounded-2xl p-4 text-center shadow-lg`}
-                  >
-                    <div className={`text-lg font-bold ${gold ? "text-accent" : "text-primary"}`}>{label}</div>
-                    <div className="text-slate-700 text-xs mt-1">{desc}</div>
+                  { label: t.about.expertise, desc: t.about.expertiseDesc },
+                  { label: t.about.agility, desc: t.about.agilityDesc },
+                  { label: t.about.efficiency, desc: t.about.efficiencyDesc },
+                  { label: t.about.discipline, desc: t.about.disciplineDesc },
+                ].map(({ label, desc }) => (
+                  <div key={label} className="rounded-xl bg-white/10 border border-white/15 p-4">
+                    <div className="font-bold text-genetics-gold-400">{label}</div>
+                    <div className="text-xs text-genetics-dark-blue-100 mt-1">{desc}</div>
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Vision */}
+            <div className="bg-genetics-dark-blue-50 rounded-2xl p-8 border border-genetics-dark-blue-100">
+              <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
+                  <Eye className="h-5 w-5 text-white" />
+                </div>
+                {t.about.vision}
+              </h4>
+              <p className="text-slate-700 leading-relaxed">{t.about.visionText}</p>
+            </div>
+
+            {/* Mission */}
+            <div className="lg:col-span-2 bg-genetics-gold-50 rounded-2xl p-8 border border-genetics-gold-100">
+              <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
+                <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mr-3">
+                  <Target className="h-5 w-5 text-white" />
+                </div>
+                {t.about.mission}
+              </h4>
+              <p className="text-slate-700 leading-relaxed mb-4">{t.about.missionText}</p>
+              <ul className="grid grid-cols-2 gap-x-8 gap-y-3 text-slate-700">
+                {[t.about.missionItem1, t.about.missionItem2, t.about.missionItem3, t.about.missionItem4].map(
+                  (item, i) => (
+                    <li key={item} className="flex items-start">
+                      <div
+                        className={`w-2 h-2 mt-2 ${i % 2 ? "bg-accent" : "bg-primary"} rounded-full mr-3 flex-shrink-0`}
+                      />
+                      {item}
+                    </li>
+                  ),
+                )}
+              </ul>
             </div>
           </div>
         </div>
@@ -742,91 +702,47 @@ export default function HomePage() {
             <p className="text-lg text-slate-600 md:hidden">{t.solutions.subtitleMobile}</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
-            {services.map((service, index) => {
-              const open = openServices.has(index)
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
+            {services.map((service) => {
               const isPrimary = service.color === "primary"
               return (
                 <Card
                   key={service.title}
-                  className={`border-0 shadow-lg transition-all duration-300 cursor-pointer group ${
-                    open
-                      ? "shadow-2xl border-2 border-genetics-dark-blue-200 lg:scale-105"
-                      : "hover:shadow-xl hover:scale-[1.02]"
-                  }`}
+                  className={`h-full border-0 border-t-4 ${
+                    isPrimary ? "border-t-primary" : "border-t-accent"
+                  } shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300`}
                 >
-                  <CardContent className="p-0">
-                    <button
-                      type="button"
-                      className="w-full p-6 text-center"
-                      onClick={() => toggleService(index)}
-                      aria-expanded={open}
-                    >
-                      <div className="flex flex-col items-center space-y-4">
-                        <div
-                          className={`w-20 h-20 ${
-                            isPrimary ? "bg-primary" : "bg-accent"
-                          } rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}
-                        >
-                          <service.icon className="h-10 w-10 text-white" />
-                        </div>
-                        <div>
-                          <h3
-                            className={`text-xl font-bold mb-2 transition-colors ${
-                              open ? (isPrimary ? "text-primary" : "text-accent") : "text-slate-900"
-                            }`}
-                          >
-                            {service.title}
-                          </h3>
-                          <p className="text-slate-600 text-sm leading-relaxed">{service.description}</p>
-                        </div>
-                        <div
-                          className={`transition-all duration-300 ${
-                            open ? (isPrimary ? "text-primary rotate-180" : "text-accent rotate-180") : "text-slate-400"
-                          }`}
-                        >
-                          <ChevronDown className="h-6 w-6" />
-                        </div>
+                  <CardContent className="p-6 lg:p-8">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div
+                        className={`w-14 h-14 ${
+                          isPrimary ? "bg-primary" : "bg-accent"
+                        } rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg`}
+                      >
+                        <service.icon className="h-7 w-7 text-white" />
                       </div>
-                    </button>
-                    <div
-                      className={`overflow-auto transition-all duration-500 ease-in-out ${
-                        open ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
-                      }`}
-                    >
-                      <div className="px-6 pb-6">
-                        <div
-                          className={`border-t-2 ${
-                            isPrimary ? "border-genetics-dark-blue-200" : "border-genetics-gold-200"
-                          } pt-4`}
-                        >
-                          <div className="space-y-3">
-                            {service.subServices.map((sub) => (
-                              <div
-                                key={sub.name}
-                                className="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group/sub"
-                              >
-                                <div
-                                  className={`w-10 h-10 ${
-                                    isPrimary ? "bg-primary" : "bg-accent"
-                                  } rounded-lg flex items-center justify-center flex-shrink-0`}
-                                >
-                                  <sub.icon className="h-5 w-5 text-white" />
-                                </div>
-                                <span className="text-slate-700 font-medium text-sm flex-1">{sub.name}</span>
-                                <div
-                                  className={`opacity-0 group-hover/sub:opacity-100 transition-opacity ${
-                                    isPrimary ? "text-primary" : "text-accent"
-                                  }`}
-                                >
-                                  <ArrowRight className="h-4 w-4" />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                      <div>
+                        <h3 className="text-lg xl:text-xl font-bold text-slate-900 leading-snug">{service.title}</h3>
+                        <p className="text-slate-600 text-sm">{service.description}</p>
                       </div>
                     </div>
+                    <ul className="space-y-2">
+                      {service.subServices.map((sub) => (
+                        <li
+                          key={sub.name}
+                          className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                        >
+                          <div
+                            className={`w-8 h-8 ${
+                              isPrimary ? "bg-primary/10 text-primary" : "bg-accent/15 text-accent"
+                            } rounded-lg flex items-center justify-center flex-shrink-0`}
+                          >
+                            <sub.icon className="h-4 w-4" />
+                          </div>
+                          <span className="text-slate-700 font-medium text-sm">{sub.name}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </CardContent>
                 </Card>
               )
