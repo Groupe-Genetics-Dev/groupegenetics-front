@@ -467,9 +467,9 @@ export default function HomePage() {
                     : "Leader in intelligent technological security in Africa"}
                 </p>
               </div>
-              <div className="bg-teal-50 rounded-xl p-4 border border-teal-100 shadow-sm">
+              <div className="bg-white rounded-xl p-4 border border-genetics-dark-blue-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
                     <Target className="h-4 w-4 text-white" />
                   </div>
                   <h4 className="font-bold text-slate-900 text-sm">{t.about.mission}</h4>
@@ -587,9 +587,9 @@ export default function HomePage() {
             </div>
 
             {/* Mission */}
-            <div className="lg:col-span-2 bg-teal-50 rounded-2xl p-8 border border-teal-100">
+            <div className="lg:col-span-2 bg-genetics-dark-blue-50 rounded-2xl p-8 border border-genetics-dark-blue-100">
               <h4 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center mr-3">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
                   <Target className="h-5 w-5 text-white" />
                 </div>
                 {t.about.mission}
@@ -600,7 +600,7 @@ export default function HomePage() {
                   (item, i) => (
                     <li key={item} className="flex items-start">
                       <div
-                        className={`w-2 h-2 mt-2 ${i % 2 ? "bg-teal-500" : "bg-primary"} rounded-full mr-3 flex-shrink-0`}
+                        className={`w-2 h-2 mt-2 ${i % 2 ? "bg-accent" : "bg-primary"} rounded-full mr-3 flex-shrink-0`}
                       />
                       {item}
                     </li>
