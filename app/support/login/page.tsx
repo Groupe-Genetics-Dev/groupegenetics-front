@@ -3,26 +3,37 @@
 import { useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { ArrowRight, Loader2, Lock, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import AuthLayout from "@/components/support/AuthLayout"
+import { FormAlert, PasswordField, TextField, isEmail } from "@/components/support/fields"
 import { ApiError, adminDashboardUrl, login } from "@/lib/auth"
+
+type Errors = { email?: string; password?: string }
 
 export default function LoginPage() {
   const router = useRouter()
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [errors, setErrors] = useState<Errors>({})
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const data = new FormData(e.currentTarget)
+    const email = String(data.get("email") || "").trim()
+    const password = String(data.get("password") || "")
+
+    const fieldErrors: Errors = {}
+    if (!email) fieldErrors.email = "Saisissez votre adresse e-mail."
+    else if (!isEmail(email)) fieldErrors.email = "Cette adresse e-mail n'est pas valide."
+    if (!password) fieldErrors.password = "Saisissez votre mot de passe."
+    setErrors(fieldErrors)
+    if (Object.keys(fieldErrors).length) return
+
     setError(null)
     setLoading(true)
     try {
-      const session = await login(String(data.get("email")).trim(), String(data.get("password")))
+      const session = await login(email, password)
       if (session.role === "admin") {
         window.location.href = adminDashboardUrl(session.access_token, session.user_name)
       } else {
@@ -35,66 +46,54 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthLayout title="Connexion" subtitle="Accédez à votre espace support Genetics.">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <Label htmlFor="email" className="text-slate-900 font-medium">
-            Adresse e-mail
-          </Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="votre@email.com"
-            className="mt-1 h-11 bg-white"
-          />
-        </div>
-        <div>
-          <Label htmlFor="password" className="text-slate-900 font-medium">
-            Mot de passe
-          </Label>
-          <div className="relative mt-1">
-            <Input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              required
-              placeholder="••••••••"
-              className="h-11 bg-white pr-11"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-              className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-500 hover:text-primary"
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
+    <AuthLayout mode="login" title="Bon retour parmi nous" subtitle="Connectez-vous pour accéder à votre espace support.">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        <TextField
+          id="email"
+          name="email"
+          type="email"
+          label="Adresse e-mail"
+          icon={Mail}
+          autoComplete="email"
+          placeholder="vous@entreprise.com"
+          error={errors.email}
+          onChange={() => errors.email && setErrors((e) => ({ ...e, email: undefined }))}
+        />
+        <PasswordField
+          id="password"
+          name="password"
+          label="Mot de passe"
+          icon={Lock}
+          autoComplete="current-password"
+          placeholder="Votre mot de passe"
+          error={errors.password}
+          onChange={() => errors.password && setErrors((e) => ({ ...e, password: undefined }))}
+        />
 
-        {error && (
-          <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </p>
-        )}
+        {error && <FormAlert>{error}</FormAlert>}
 
         <Button
           type="submit"
           disabled={loading}
-          className="w-full h-11 bg-primary hover:bg-genetics-dark-blue-700 text-base"
+          className="group h-12 w-full rounded-xl bg-primary text-base font-semibold shadow-lg shadow-primary/20 hover:bg-genetics-dark-blue-700"
         >
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Se connecter
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Connexion en cours...
+            </>
+          ) : (
+            <>
+              Se connecter
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+            </>
+          )}
         </Button>
       </form>
 
-      <p className="mt-8 text-center text-sm text-slate-600">
+      <p className="mt-8 text-center text-sm text-slate-500">
         Pas encore de compte ?{" "}
-        <Link href="/support/register" className="font-semibold text-primary hover:text-accent transition-colors">
+        <Link href="/support/register" className="font-semibold text-primary hover:text-accent">
           Créer un compte
         </Link>
       </p>
