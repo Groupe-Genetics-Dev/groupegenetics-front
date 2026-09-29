@@ -53,6 +53,31 @@ type Service = {
 
 type SendStatus = "idle" | "sending" | "sent" | "error"
 
+// Titre révélé mot par mot (animation d'entrée de l'accueil)
+function AnimatedWords({ parts, startDelay = 0, step = 0.09 }: { parts: { text: string; className?: string }[]; startDelay?: number; step?: number }) {
+  let index = 0
+  return (
+    <>
+      {parts.map((part, p) =>
+        part.text
+          .split(/(\s+)/)
+          .filter((chunk) => chunk.length > 0)
+          .map((chunk, c) => {
+            if (/^\s+$/.test(chunk)) return <span key={`${p}-${c}`}> </span>
+            const delay = startDelay + index++ * step
+            return (
+              <span key={`${p}-${c}`} className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-bottom">
+                <span className={`inline-block animate-word-rise ${part.className ?? ""}`} style={{ animationDelay: `${delay}s` }}>
+                  {chunk}
+                </span>
+              </span>
+            )
+          }),
+      )}
+    </>
+  )
+}
+
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [lang, setLang] = useState<Lang>("fr")
@@ -299,7 +324,7 @@ export default function HomePage() {
       </Dialog>
 
       {/* ---------- Navigation ---------- */}
-      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-slate-200">
+      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-slate-200 animate-slide-down">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -378,36 +403,52 @@ export default function HomePage() {
         )}
       </nav>
 
-      {/* ---------- Accueil ---------- */}
+      {/* ---------- Accueil (animation d'entrée) ---------- */}
       <section id="accueil" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-genetics-dark-blue-950">
-        <Image
-          src="/hero-bg.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+        <div className="absolute inset-0 animate-hero-bg will-change-transform">
+          <Image
+            src="/hero-bg.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[70%_center]"
+          />
+        </div>
         {/* Voile bleu pour garder le texte lisible sur la photo */}
-        <div className="absolute inset-0 bg-gradient-to-b from-genetics-dark-blue-950/80 via-genetics-dark-blue-800/60 to-genetics-dark-blue-950/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-genetics-dark-blue-950/75 via-genetics-dark-blue-800/40 to-genetics-dark-blue-950/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-genetics-dark-blue-950/60 via-transparent to-genetics-dark-blue-950/40" />
+        {/* Halos lumineux qui flottent lentement */}
+        <div className="pointer-events-none absolute -left-24 top-1/4 h-80 w-80 rounded-full bg-accent/20 blur-3xl animate-float" />
+        <div className="pointer-events-none absolute -right-20 bottom-10 h-96 w-96 rounded-full bg-sky-400/15 blur-3xl animate-float [animation-delay:-7s]" />
+        {/* Rideau bleu qui s'ouvre à l'arrivée sur la page */}
+        <div className="pointer-events-none absolute inset-0 z-20 bg-genetics-dark-blue-950 animate-veil-out" />
 
         {/* Version desktop / tablette */}
         <div className="relative z-10 text-center max-w-6xl mx-auto px-4 sm:px-6 hidden md:block">
           <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-            {t.hero.title}
-            <span className="text-genetics-dark-blue-100">{t.hero.business}</span>
-            {t.hero.by}
-            <span className="text-accent">{t.hero.technology}</span>
+            <AnimatedWords
+              startDelay={0.45}
+              parts={[
+                { text: t.hero.title },
+                { text: t.hero.business, className: "text-genetics-dark-blue-100" },
+                { text: t.hero.by },
+                { text: t.hero.technology, className: "text-accent" },
+              ]}
+            />
           </h1>
-          <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">{t.hero.subtitle}</p>
-          <div className="flex flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-white text-primary hover:bg-slate-100 text-lg px-8 py-3">
+          <div className="mx-auto mb-8 h-1 w-28 origin-left rounded-full bg-accent animate-grow-x [animation-delay:1.3s]" />
+          <p className="text-xl text-slate-200 mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-up [animation-delay:1.45s]">
+            {t.hero.subtitle}
+          </p>
+          <div className="flex flex-row gap-4 justify-center animate-fade-up [animation-delay:1.7s]">
+            <Button asChild size="lg" className="bg-white text-primary hover:bg-slate-100 text-lg px-8 py-3 shadow-xl transition-transform hover:-translate-y-0.5">
               <Link href="#solutions">
                 {t.hero.discoverServices}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button size="lg" className="bg-accent hover:bg-genetics-gold-600 text-lg px-8 py-3" onClick={openContact}>
+            <Button size="lg" className="bg-accent hover:bg-genetics-gold-600 text-lg px-8 py-3 shadow-xl shadow-accent/30 transition-transform hover:-translate-y-0.5" onClick={openContact}>
               {t.hero.freeConsultation}
             </Button>
           </div>
@@ -416,12 +457,14 @@ export default function HomePage() {
         {/* Version mobile */}
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 md:hidden">
           <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
-            {t.hero.titleMobile}
-            <span className="text-accent">{t.hero.it}</span>
-            {t.hero.trust}
+            <AnimatedWords
+              startDelay={0.45}
+              parts={[{ text: t.hero.titleMobile }, { text: t.hero.it, className: "text-accent" }, { text: t.hero.trust }]}
+            />
           </h1>
-          <p className="text-lg text-slate-200 mb-6 leading-relaxed">{t.hero.subtitleMobile}</p>
-          <div className="flex flex-col gap-3 justify-center">
+          <div className="mx-auto mb-5 h-1 w-20 origin-left rounded-full bg-accent animate-grow-x [animation-delay:1.1s]" />
+          <p className="text-lg text-slate-200 mb-6 leading-relaxed animate-fade-up [animation-delay:1.25s]">{t.hero.subtitleMobile}</p>
+          <div className="flex flex-col gap-3 justify-center animate-fade-up [animation-delay:1.45s]">
             <Button asChild size="lg" className="bg-white text-primary hover:bg-slate-100 px-6 py-3">
               <Link href="#solutions">
                 {t.hero.ourServices}
@@ -433,6 +476,17 @@ export default function HomePage() {
             </Button>
           </div>
         </div>
+
+        {/* Indicateur de défilement */}
+        <a
+          href="#apropos"
+          aria-label="Découvrir la suite"
+          className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-fade-up [animation-delay:2.2s]"
+        >
+          <span className="flex h-11 w-7 justify-center rounded-full border-2 border-white/60 pt-2 transition-colors hover:border-white">
+            <span className="h-2 w-1 rounded-full bg-white animate-scroll-dot" />
+          </span>
+        </a>
       </section>
 
       {/* ---------- À propos ---------- */}
