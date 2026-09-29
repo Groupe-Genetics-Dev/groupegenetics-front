@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { CheckCircle2, ExternalLink, FileText, LayoutDashboard, Loader2, LogOut, Menu, TriangleAlert, Users, X, XCircle } from "lucide-react"
+import { CheckCircle2, FileText, LayoutDashboard, Loader2, LogOut, Menu, TriangleAlert, Users, X, XCircle } from "lucide-react"
 import { getMe, getToken, logout, type User } from "@/lib/auth"
 import { listAccounts } from "@/lib/admin"
 import { cn } from "@/lib/utils"
@@ -74,18 +74,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const isActive = (href: string) => (href === "/support/admin" ? pathname === href : pathname.startsWith(href))
 
-  const initials = session.user.name
-    .split(/\s+/)
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase()
-
   const sidebar = (
     <div className="flex h-full flex-col bg-gradient-to-b from-genetics-dark-blue-800 to-genetics-dark-blue-950 text-white">
       <div className="relative px-4 pb-6 pt-5">
-        <Link href="/support/admin" className="flex w-full items-center justify-center rounded-2xl bg-white px-4 py-4 shadow-lg">
-          <Image src="/logo.png" alt="Genetics" width={541} height={271} priority className="h-auto w-full max-w-[220px]" />
+        <Link href="/support/admin" className="flex w-full items-center justify-center rounded-2xl bg-white px-4 py-2 shadow-lg">
+          <Image src="/logo.png" alt="Genetics" width={541} height={271} priority className="h-16 w-auto" />
         </Link>
         <button
           onClick={() => setMenuOpen(false)}
@@ -96,7 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </button>
       </div>
 
-      <p className="px-6 text-[11px] font-semibold uppercase tracking-widest text-genetics-dark-blue-200/70">Administration</p>
+      <p className="px-6 text-center text-[11px] font-semibold uppercase tracking-widest text-genetics-dark-blue-200/70">Administration</p>
       <nav className="mt-3 flex-1 space-y-1 px-3" aria-label="Administration">
         {NAV.map(({ href, label, icon: Icon }) => {
           const active = isActive(href)
@@ -128,31 +121,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         })}
       </nav>
 
-      <div className="space-y-2 border-t border-white/10 p-4">
-        <Link href="/" target="_blank" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-genetics-dark-blue-100 hover:bg-white/5 hover:text-white">
-          <ExternalLink className="h-4 w-4" />
-          Voir le site
-        </Link>
-        <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-          <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-accent text-base font-bold shadow-lg shadow-accent/30">
-              {initials}
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[15px] font-semibold leading-snug">{session.user.name}</span>
-              <span className="block truncate text-xs text-genetics-dark-blue-200" title={session.user.email}>
-                {session.user.email}
-              </span>
-            </span>
-          </div>
-          <button
-            onClick={signOut}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-white/20"
-          >
-            <LogOut className="h-4 w-4" />
-            Se déconnecter
-          </button>
-        </div>
+      <div className="border-t border-white/10 p-4">
+        <button
+          onClick={signOut}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-3 text-sm font-semibold transition-colors hover:bg-white/20"
+        >
+          <LogOut className="h-4 w-4" />
+          Se déconnecter
+        </button>
       </div>
     </div>
   )
