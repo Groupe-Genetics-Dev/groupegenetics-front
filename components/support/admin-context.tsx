@@ -2,8 +2,9 @@
 
 import { createContext, useContext } from "react"
 import type { User } from "@/lib/auth"
+import type { Flash } from "@/components/support/PortalShell"
 
-export type Flash = { id: number; message: string; tone: "success" | "error" }
+export type { Flash }
 
 type AdminContext = {
   token: string
